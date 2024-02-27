@@ -27,6 +27,12 @@ import javax.sql.DataSource;
 import com.alibaba.druid.filter.stat.MergeStatFilter;
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.pool.DruidDataSource;
+import io.agroal.api.AgroalDataSource;
+import io.agroal.api.configuration.supplier.AgroalConnectionFactoryConfigurationSupplier;
+import io.agroal.api.configuration.supplier.AgroalConnectionPoolConfigurationSupplier;
+import io.agroal.api.configuration.supplier.AgroalDataSourceConfigurationSupplier;
+import io.agroal.api.security.NamePrincipal;
+import io.agroal.api.security.SimplePassword;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.PooledConnection;
@@ -51,7 +57,8 @@ public class BenchBase
 {
     protected static final int MIN_POOL_SIZE = 0;
 
-    @Param({ "hikari", "dbcp2", "tomcat", "c3p0", "vibur", "druid", "druid-stat", "druid-stat-merge" })
+    @Param({ "hikari", "dbcp2", "tomcat", "c3p0", "vibur", "druid", "druid-stat", "druid-stat-merge", "agroal" })
+//    @Param({ "hikari", "agroal" })
     public String pool;
 
     @Param({ "32" })
@@ -112,6 +119,9 @@ public class BenchBase
         case "druid-stat-merge":
             setupDruidStatMerge();
             break;
+        case "agroal":
+            setupAgroal();
+            break;
         }
 
     }
@@ -148,7 +158,9 @@ public class BenchBase
         case "druid-stat-merge":
             ((DruidDataSource) DS).close();
             break;
-
+        case "agroal":
+            ((AgroalDataSource) DS).close();
+            break;
         }
     }
 
@@ -335,6 +347,23 @@ public class BenchBase
         vibur.start();
 
         DS = vibur;
+    }
+
+    private void setupAgroal()
+    {
+        DS = new io.agroal.pool.DataSource(new AgroalDataSourceConfigurationSupplier()
+                .connectionPoolConfiguration(new AgroalConnectionPoolConfigurationSupplier()
+                        .connectionFactoryConfiguration(new AgroalConnectionFactoryConfigurationSupplier()
+                                .jdbcUrl(jdbcUrl)
+                                .principal(new NamePrincipal("brettw"))
+                                .credential(new SimplePassword(""))
+                                .autoCommit(false)
+                        )
+                        .initialSize(MIN_POOL_SIZE)
+                        .minSize(MIN_POOL_SIZE)
+                        .maxSize(maxPoolSize)
+                        .get())
+                .get());
     }
 
     private void setupOne()

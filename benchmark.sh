@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JAVA_OPTIONS="-server -XX:-RestrictContended -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms1096m -Xmx1096m"
+JAVA_OPTIONS="-server -XX:-RestrictContended -XX:+AggressiveOpts -Xms4G -Xmx4G"
 
 if [[ "clean" == "$1" ]]; then
    mvn clean package

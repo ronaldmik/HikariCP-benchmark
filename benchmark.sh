@@ -19,11 +19,11 @@ if [[ "$2" == "-t" ]]; then
 fi
 
 if [[ "quick" == "$1" ]]; then
-   java -jar ./target/microbenchmarks.jar -jvmArgs "$JAVA_OPTIONS" -wi 3 -i 8 $JMH_THREADS -f 2 $2 $3 $4 $5 $6 $7 $8 $9
+   java -jar ./target/microbenchmarks.jar -jvmArgs "$JAVA_OPTIONS" -wi 3 -i 8 $JMH_THREADS -rf json -f 2 $2 $3 $4 $5 $6 $7 $8 $9
 elif [[ "medium" == "$1" ]]; then
-   java -jar ./target/microbenchmarks.jar -jvmArgs "$JAVA_OPTIONS" -wi 3 -f 8 -i 6 $JMH_THREADS $2 $3 $4 $5 $6 $7 $8 $9
+   java -jar ./target/microbenchmarks.jar -jvmArgs "$JAVA_OPTIONS" -wi 3 -f 8 -i 6 $JMH_THREADS -rf json$2 $3 $4 $5 $6 $7 $8 $9
 elif [[ "long" == "$1" ]]; then
-   java -jar ./target/microbenchmarks.jar -jvmArgs "$JAVA_OPTIONS" -wi 3 -i 15 $JMH_THREADS $2 $3 $4 $5 $6 $7 $8 $9
+   java -jar ./target/microbenchmarks.jar -jvmArgs "$JAVA_OPTIONS" -wi 3 -i 15 $JMH_THREADS -rf json $2 $3 $4 $5 $6 $7 $8 $9
 elif [[ "profile" == "$1" ]]; then
    java -server $JAVA_OPTIONS -agentpath:/Applications/jprofiler8/bin/macos/libjprofilerti.jnilib=port=8849 -jar ./target/microbenchmarks.jar -r 5 -wi 3 -i 8 $JMH_THREADS -f 0 $2 $3 $4 $5 $6 $7 $8 $9
 elif [[ "debug" == "$1" ]]; then
